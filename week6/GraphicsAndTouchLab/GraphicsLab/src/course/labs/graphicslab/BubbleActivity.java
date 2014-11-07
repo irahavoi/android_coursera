@@ -84,20 +84,20 @@ public class BubbleActivity extends Activity {
 				.getStreamVolume(AudioManager.STREAM_MUSIC)
 				/ mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-		// TODO - make a new SoundPool, allowing up to 10 streams
-		mSoundPool = null;
 
-		// TODO - set a SoundPool OnLoadCompletedListener that calls
-		// setupGestureDetector()
+		mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+
+		mSoundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+			
+			@Override
+			public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+				setupGestureDetector();
+				
+			}
+		});
 		
 		
-		
-		
-		
-		// TODO - load the sound from res/raw/bubble_pop.wav
-		
-		
-		
+		mSoundID = mSoundPool.load(this, R.raw.bubble_pop, 1);
 
 	}
 
@@ -126,6 +126,8 @@ public class BubbleActivity extends Activity {
 			public boolean onFling(MotionEvent event1, MotionEvent event2,
 					float velocityX, float velocityY) {
 
+				
+				
 				// TODO - Implement onFling actions.
 				// You can get all Views in mFrame one at a time
 				// using the ViewGroup.getChildAt() method
@@ -147,22 +149,32 @@ public class BubbleActivity extends Activity {
 			@Override
 			public boolean onSingleTapConfirmed(MotionEvent event) {
 
-				// TODO - Implement onSingleTapConfirmed actions.
+				boolean tappedOnABubble = false;
+				float tapX = event.getX();
+				float tapY = event.getY();
+				
+				
+				// Implement onSingleTapConfirmed actions.
 				// You can get all Views in mFrame using the
 				// ViewGroup.getChildCount() method
-
-
+				for(int i = 0; i < mFrame.getChildCount(); i++){
+					View bubble = mFrame.getChildAt(i);
+					float bubbleX =  bubble.getX();
+					float bubbleY = bubble.getY();
+					
+					
+					if(tapX == bubbleX && tapY == bubbleY){
+						tappedOnABubble = true;
+						mSoundPool.play(mSoundID, 1, 1, 1, 0, 1);
+						mFrame.removeView(bubble);
+						break;
+					}
+				}
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
+				if(!tappedOnABubble){
+					BubbleView bubble = new BubbleView(mFrame.getContext(), tapX, tapY);
+					mFrame.addView(bubble);
+				}
 				
 				return true;
 			}
