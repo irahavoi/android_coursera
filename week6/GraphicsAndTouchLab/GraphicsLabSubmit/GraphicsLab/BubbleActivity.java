@@ -270,8 +270,8 @@ public class BubbleActivity extends Activity {
 
 			case SINGLE:
 
-				mDx = 4;
-				mDy = 4;
+				mDx = 3;
+				mDy = 3;
 				break;
 
 			case STILL:
@@ -294,7 +294,7 @@ public class BubbleActivity extends Activity {
 		private void createScaledBitmap(Random r) {
 
 			if (speedMode != RANDOM) {
-				mScaledBitmapWidth = BITMAP_SIZE * 1;
+				mScaledBitmapWidth = BITMAP_SIZE * 2;
 			} else {
 				//set scaled bitmap size in range [1..3] * BITMAP_SIZE
 				mScaledBitmapWidth = BITMAP_SIZE * 1;
