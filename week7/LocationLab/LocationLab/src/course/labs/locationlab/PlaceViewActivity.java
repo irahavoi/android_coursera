@@ -53,7 +53,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// Add a footerView to the ListView
 		// You can use footer_view.xml to define the footer
 
-		View footerView = findViewById(R.id.footer);
+		View footerView = getLayoutInflater().inflate(R.layout.footer_view, null); 
 		
 		placesListView.addFooterView(footerView);
 
@@ -85,7 +85,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 				mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 				
 				if(mLastLocationReading == null){
-					view.setClickable(false);
+					return;
 				} else{
 					List<PlaceRecord> records =  mAdapter.getList();
 					
@@ -99,7 +99,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 					
 				}
 				
-				new PlaceDownloaderTask(that, true).execute(mLastLocationReading);
+				new PlaceDownloaderTask(that, false).execute(mLastLocationReading);
 			}
 
 		});
@@ -120,8 +120,7 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// Only keep this last reading if it is fresh - less than 5 minutes old
 
 		mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-		long mLastLocationReadingAge = SystemClock.elapsedRealtimeNanos() - mLastLocationReading.getElapsedRealtimeNanos();
-		if(mLastLocationReadingAge  > 1000 * 5){
+		if(mLastLocationReading != null && SystemClock.elapsedRealtimeNanos() - mLastLocationReading.getElapsedRealtimeNanos()  > FIVE_MINS){
 			mLastLocationReading = null;
 		}
 		
