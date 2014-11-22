@@ -141,13 +141,30 @@ public class PlaceViewAdapter extends CursorAdapter {
 			mPlaceRecords.add(listItem);
 
 			ContentValues values = new ContentValues();
-			values.put(PlaceBadgesContract.COUNTRY_NAME, listItem.getCountryName());
-			values.put(PlaceBadgesContract.PLACE_NAME, listItem.getPlace());
-			values.put(PlaceBadgesContract.FLAG_BITMAP_PATH, listItem.getFlagBitmapPath());
-			values.put(PlaceBadgesContract.LAT, listItem.getLocation().getLatitude());
-			values.put(PlaceBadgesContract.LON, listItem.getLocation().getLongitude());
+
+			//Insert new record into the ContentProvider
+			ContentProviderOperation op = ContentProviderOperation.newInsert(PlaceBadgesContract.CONTENT_URI)
+				.withValue(PlaceBadgesContract.COUNTRY_NAME, listItem.getCountryName())
+				.withValue(PlaceBadgesContract.PLACE_NAME, listItem.getPlace())
+				.withValue(PlaceBadgesContract.FLAG_BITMAP_PATH, listItem.getFlagBitmapPath())
+				.withValue(PlaceBadgesContract.LAT, listItem.getLocation().getLatitude())
+				.withValue(PlaceBadgesContract.LON, listItem.getLocation().getLongitude())
+				.build();
 			
-			mContext.getContentResolver().insert(PlaceBadgesContract.CONTENT_URI, values);        
+			ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+			ops.add(op);
+			
+			// Apply all batched operations
+			try {
+				mContext.getContentResolver().applyBatch(PlaceBadgesContract.AUTHORITY, ops);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OperationApplicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
         }
 
 	}
@@ -161,7 +178,7 @@ public class PlaceViewAdapter extends CursorAdapter {
 		
 		// - delete all records in the ContentProvider
 		mContext.getContentResolver().delete(PlaceBadgesContract.BASE_URI, null, null);
-		this.notifyDataSetChanged();
+
         
         
 	}

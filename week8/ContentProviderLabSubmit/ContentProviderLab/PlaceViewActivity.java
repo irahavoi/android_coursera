@@ -73,7 +73,9 @@ public class PlaceViewActivity extends ListActivity implements
 
 		// You can use footer_view.xml to define the footer
 		
-		View footerView = getLayoutInflater().inflate(R.layout.footer_view, placesListView, false); 
+		View footerView = getLayoutInflater().inflate(R.layout.footer_view, null); 
+		
+		placesListView.addFooterView(footerView);
 		
 		
 	
@@ -114,7 +116,7 @@ public class PlaceViewActivity extends ListActivity implements
 					
 				}
 				
-				new PlaceDownloaderTask(that, true).execute(mLastLocationReading);
+				new PlaceDownloaderTask(that, false).execute(mLastLocationReading);
 			}
 
 		});
